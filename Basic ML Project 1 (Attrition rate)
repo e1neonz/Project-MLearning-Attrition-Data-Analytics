@@ -1,0 +1,913 @@
+# Import Packages
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pickle
+import joblib
+import scipy.stats as stats
+
+
+# In[2]:
+
+
+# Import Dataset
+df = pd.read_csv('project_dataset.csv')
+df.head(10)
+
+
+#  ### Data Cleaning
+
+# In[3]:
+
+
+#Check Data Size
+df.shape
+
+
+# In[4]:
+
+
+#Detect Missing Values (non) - non
+df.isnull().sum()
+
+
+# In[3]:
+
+
+#Trace Duplicated Rows - Non
+
+df[df.duplicated(keep=False)]
+
+
+# In[4]:
+
+
+df.describe()
+
+
+# In[5]:
+
+
+df.columns
+
+
+# ### Selected Variables
+
+# In[8]:
+
+
+df = df[['Age', 'MonthlyIncome', 'JobSatisfaction', 'Bonus', 'DistanceFromHome', 'PerformanceRating', 'YearsAtCompany', 'OverTime', 'EnvSatisfaction', 'Attrition']]
+df.head()
+
+
+# #### 'Attrition' Proportion (Categorical)
+
+# In[9]:
+
+
+#Attrition of Employees
+
+attr_cnt = df['Attrition'].value_counts()
+
+attr_cnt
+
+
+# In[10]:
+
+
+#attrition rate/proportion
+
+attr_prp = df['Attrition'].value_counts(normalize=True)*100
+attr_prp.plot(kind='pie',autopct='%.1f%%')
+plt.show()
+
+#Retention rate of the employees is higher compared to attrition
+
+
+# #### 'Age' Distribution (Numerical)
+
+# In[11]:
+
+
+#Histogram Analysis for Age
+
+
+# In[12]:
+
+
+plt.hist(df['Age'],bins=25)
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+
+plt.show()
+
+
+# In[13]:
+
+
+#boxplot for 'Age' analysis
+sns.boxplot(x='Age',data=df)
+plt.show()
+
+#median is located slightly to the left. Age is skewed to the right (+ skewed)
+#25% of the employees w/ Age less than 30 y/o
+#25%of the employess w/ the Age more than 43 y/o
+#50% of the employess are w/ the Age between 30 -> 43 y/o
+#1/2 of the employees Age is more than 36 y/o
+
+
+# #### 'MonthlyIncome' Distribution (Numerical)
+
+# In[14]:
+
+
+#Histogram for 'MonthlyIncome' analysis
+plt.hist(df['MonthlyIncome'],bins=25)
+plt.xlabel('MonthlyIncome')
+plt.ylabel('Frequency')
+
+plt.show()
+
+
+# In[15]:
+
+
+#boxplot for 'MonthlyIncome' analysis
+
+
+sns.boxplot(x='MonthlyIncome',data=df)
+plt.show()
+
+#median is located slightly to the left. 'MonthlyIncome' is skewed to the right (+ skewed)
+#Employees w/ 'MonthlyIncome' more than $16851 is rare & outliers
+#25% of the employees w/ 'MonthlyIncome' less than $2911
+#25% of the employess w/ 'MonthlyIncome' more than $8379
+#50% of the employess are w/ 'MonthlyIncome' between $2911 & $8379
+#1/2 of the employees 'MonthlyIncome' is more than $4919
+
+
+# #### 'JobSatisfaction' Proportion (Categorical)
+
+# In[16]:
+
+
+jbstsfctn_cnt = df['JobSatisfaction'].value_counts()
+
+jbstsfctn_cnt
+
+
+# In[17]:
+
+
+#JobSatisfaction rate/proportion
+
+jbstsfctn_prp = df['JobSatisfaction'].value_counts(normalize=True)*100
+jbstsfctn_prp.plot(kind='pie',autopct='%.1f%%')
+plt.show()
+
+#Majority are satisfied
+#61.7% rated 3-4
+#39.3% rated 1-2
+
+
+# #### 'Bonus' Distribution (Numerical)
+
+# In[18]:
+
+
+#Histogram Analysis for Bonus
+
+plt.hist(df['Bonus'],bins=25)
+plt.xlabel('Bonus')
+plt.ylabel('Frequency')
+
+plt.show()
+
+
+# In[19]:
+
+
+#boxplot for 'Bonus' analysis
+
+
+
+sns.boxplot(x='Bonus',data=df)
+plt.show()
+
+
+#25% of the employees w/ 'Bonus' less than $9333.75
+#25% of the employess w/ 'Bonus' more than $26103.75
+#50% of the employess are w/ 'Bonus' between $9333.75 & $26103.75
+#1/2 of the employees 'Bonus' is more than $15484.50
+#median is located slightly to the left. 'Bonus' is skewed to the right (+ skewed)
+#Employees w/ 'Bonus' more than $1258.75 is rare & outliers
+
+
+# #### 'DistanceFromHome' Distribution (Numerical)
+
+# In[20]:
+
+
+#Histogram Analysis for 'DistanceFromHome'
+
+plt.hist(df['DistanceFromHome'],bins=15)
+plt.xlabel('DistanceFromHome')
+plt.ylabel('Frequency')
+
+plt.show()
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[21]:
+
+
+#boxplot for 'DistanceFromHome' analysis
+sns.boxplot(x='DistanceFromHome',data=df)
+plt.show()
+
+#median is located slightly to the left. 'DistanceFromHome' is skewed to the right (+ skewed)
+
+#25% of the employees w/ 'DistanceFromHome' isless than 2 KM
+#25% of the employess w/ 'DistanceFromHome' is more than 14 KM
+#50% of the employess are w/ 'DistanceFromHome' between 2 KM & 14 KM
+#1/2 of the employees 'DistanceFromHome' is more than 7 KM
+
+
+# #### EnvSatisfaction Proportion (Categorical)
+
+# In[22]:
+
+
+envsatisfaction_cnt = df['EnvSatisfaction'].value_counts()
+envsatisfaction_cnt
+
+
+# In[23]:
+
+
+#EnvSatisfaction rate/proportion
+EnvSatisfaction_prp = df['EnvSatisfaction'].value_counts(normalize=True)*100
+EnvSatisfaction_prp.plot(kind='pie',autopct='%.1f%%')
+plt.show()
+
+#Majority of the employees are satisfied with the environment
+
+
+# #### 'YearsAtCompany' Distribution
+
+# In[24]:
+
+
+#Histogram for 'YearsAtCompany' analysis
+plt.hist(df['YearsAtCompany'],bins=25)
+plt.xlabel('YearsAtCompany')
+plt.ylabel('Frequency')
+
+plt.show()
+
+
+# In[ ]:
+
+
+
+
+
+# In[25]:
+
+
+#boxplot for 'YearsAtCompany' analysis
+sns.boxplot(x='YearsAtCompany',data=df)
+plt.show()
+
+
+#25% of the employees w/ YearsAtCompany less than 3
+#25% of the employess w/ the YearsAtCompany more than 9
+#50% of the employess are w/ the YearsAtCompany between 3-> 9 y
+#1/2 of the employees YearsAtCompany is more than 5 y/o
+#median is located slightly to the left. YearsAtCompany is skewed to the right ( + skewed)
+#Employees w/ 'YearsAtCompany' more than 18 y is rare & outliers
+
+
+# #### 'OverTime' Proportion
+
+# In[26]:
+
+
+OT_cnt = df['OverTime'].value_counts()
+OT_cnt
+
+
+# In[27]:
+
+
+#OverTime Visual Percentage Analysis
+OT_prp = df['OverTime'].value_counts(normalize=True)*100
+OT_prp.plot(kind='pie',autopct='%.1f%%')
+plt.show()
+
+#Majority are not doing Overtime(71.7%)
+
+
+# ### Multivariate Analysis (DFrame for Variable Selected)
+
+# In[28]:
+
+
+df.columns
+
+
+# In[29]:
+
+
+df = df[['Age', 'MonthlyIncome', 'JobSatisfaction', 'Bonus', 'DistanceFromHome', 'PerformanceRating', 'YearsAtCompany', 'OverTime', 'EnvSatisfaction', 'Attrition']]
+df.head()
+
+
+# #### 'Age' & 'Attrition
+
+# In[30]:
+
+
+#Age GroupBy Aggregation
+
+mean_Attrition = df.groupby('Attrition',as_index=False) ['Age'].mean()
+round(mean_Attrition,2)
+
+
+# In[31]:
+
+
+
+
+#Boxplot for Attrition & Age
+sns.boxplot(x='Attrition',y='Age',data=df)
+plt.show()
+
+#Retention of employees are higher
+
+
+
+# In[32]:
+
+
+#Levene Test
+stats.levene(df['Age'][df['Attrition']=='Yes'],
+             df['Age'][df['Attrition']=='No'],
+             center='mean')
+
+
+# In[33]:
+
+
+#Independent T-test
+stats.ttest_ind(df['Age'][df['Attrition']=='Yes'],
+             df['Age'][df['Attrition']=='No'],
+             equal_var=True)
+
+
+# The p-value obtained from the independent t-test is less 0.05.
+# 
+# Mean attrition of Yes is significantly different than No.
+# 
+# Accept Alternative Hypothesis(H1). Age is affecting Attrition.
+
+# #### 'MonthlyIncome' & 'Attrition'
+
+# In[34]:
+
+
+#GroupBy Aggregation for Attrition & MonthlyIncome
+
+mean_Attrition = df.groupby('Attrition',as_index=False) ['MonthlyIncome'].mean()
+round(mean_Attrition,2)
+
+
+# In[35]:
+
+
+
+
+#Boxplot for Attrition & Age
+sns.boxplot(x='Attrition',y='MonthlyIncome',data=df)
+plt.show()
+
+#Retention of employees are higher with higher income
+
+
+# In[36]:
+
+
+#Levene Test
+stats.levene(df['MonthlyIncome'][df['Attrition']=='Yes'],
+             df['MonthlyIncome'][df['Attrition']=='No'],
+             center='mean')
+
+
+# In[37]:
+
+
+#Independent T-test
+stats.ttest_ind(df['MonthlyIncome'][df['Attrition']=='Yes'],
+             df['MonthlyIncome'][df['Attrition']=='No'],
+             equal_var=True)
+
+
+# The p-value obtained from the independent t-test is less <0.05.
+# 
+# Mean attrition of Yes is significantly different than No. 
+# 
+# Accept Alternative Hypothesis(H1). MonthlyIncome is affecting Attrition.
+
+# In[38]:
+
+
+#Boxplot for MonthlyIncome & Attrition 
+sns.boxplot(x='Attrition',y='MonthlyIncome',data=df)
+plt.show()
+
+#Retention of employees are higher
+
+
+# #### 'JobSatisfaction' & 'Attrition'
+
+# In[39]:
+
+
+#crosstab for JobSatisfaction & Attrition
+crossTab = pd.crosstab(index=df['JobSatisfaction'], columns=df['Attrition'])
+crossTab = crossTab.round(2)
+crossTab
+
+
+# In[40]:
+
+
+crossTab.plot(kind='bar')
+plt.ylabel('Percentage %')
+plt.show()
+
+#Retention of employees are higher
+
+
+# In[41]:
+
+
+c, p, dof, expected = stats.chi2_contingency(crossTab)
+p
+
+
+# p=value = < 0.05
+# 
+# Accept alternative hypothesis(H1). Proportion difference of 'Yes' and 'No' by 'JobSatisfaction' is significant. 
+# 
+# JobSatisfaction is affecting the Attrition.
+
+# #### 'Bonus' & 'Attrition' 
+
+# In[42]:
+
+
+#GroupBy Aggregation for Bonus & Attrition 
+
+mean_Attrition = df.groupby('Attrition',as_index=False) ['Bonus'].mean()
+round(mean_Attrition,2)
+
+
+# In[43]:
+
+
+#Boxplot for Bonus & Attrition 
+sns.boxplot(x='Attrition',y='Bonus',data=df)
+plt.show()
+
+#Retention of employees are higher
+
+
+# In[44]:
+
+
+#Levene Test
+stats.levene(df['Bonus'][df['Attrition']=='Yes'],
+             df['Bonus'][df['Attrition']=='No'],
+             center='mean')
+
+
+# In[45]:
+
+
+#Independent T-test
+stats.ttest_ind(df['Bonus'][df['Attrition']=='Yes'],
+             df['Bonus'][df['Attrition']=='No'],
+             equal_var=True)
+
+
+# The p-value obtained from the independent t-test is less than <0.05.
+# 
+# Mean attrition of Yes is significantly different than No. 
+# 
+# Accept Alternative Hypothesis(H1). Bonus is affecting Attrition.
+
+# #### 'DistanceFromHome' & 'Attrition'
+
+# In[46]:
+
+
+
+#Boxplot for DistanceFromHome & Attrition
+sns.boxplot(x='Attrition',y='DistanceFromHome',data=df)
+plt.show()
+
+#Retention of employees are higher
+
+
+# In[47]:
+
+
+#Levene Test
+stats.levene(df['DistanceFromHome'][df['Attrition']=='Yes'],
+             df['DistanceFromHome'][df['Attrition']=='No'],
+             center='mean')
+
+
+# In[48]:
+
+
+#Independent T-test
+stats.ttest_ind(df['DistanceFromHome'][df['Attrition']=='Yes'],
+             df['DistanceFromHome'][df['Attrition']=='No'],
+             equal_var=True)
+
+
+# The p-value obtained from the independent t-test is less <0.05.
+# 
+# Mean attrition of Yes is significantly different than No. 
+# 
+# Accept Alternative Hypothesis(H1). DistanceFromHome is affecting Attrition.
+
+# #### 'PerformanceRating' & 'Attrition'
+
+# In[49]:
+
+
+#crosstab for PerformanceRating & Attrition
+crossTab2= pd.crosstab(index=df['PerformanceRating'], columns=df['Attrition'])
+crossTab2 = crossTab2.round(2)
+crossTab2
+
+#PerformanceRating
+
+
+# In[50]:
+
+
+crossTab2.plot(kind='bar')
+plt.ylabel('Count')
+plt.show()
+
+#Proportion/Counts of 'No' is higher than 'Yes' in PerformanceRating(3,4)
+#The higher the JobSatisfaction rating, the more counts of 'No'
+
+
+# In[51]:
+
+
+c, p, dof, expected = stats.chi2_contingency(crossTab2)
+p
+
+
+# p-value = < 0.05
+# 
+# Accept Null Hypothesis(H0). Proportion difference of 'Yes' and 'No' of 3 & 4 rating by 'PerformanceRating' is not significant.
+
+# #### 'YearsAtCompany' & 'Attrition'
+
+# In[52]:
+
+
+
+#Boxplot for YearsAtCompany & Attrition
+sns.boxplot(x='Attrition',y='YearsAtCompany',data=df)
+plt.show()
+
+#Retention of employees are higher
+
+
+# In[53]:
+
+
+#Levene Test
+stats.levene(df['YearsAtCompany'][df['Attrition']=='Yes'],
+             df['YearsAtCompany'][df['Attrition']=='No'],
+             center='mean')
+
+
+# In[54]:
+
+
+#Independent T-test
+stats.ttest_ind(df['YearsAtCompany'][df['Attrition']=='Yes'],
+             df['YearsAtCompany'][df['Attrition']=='No'],
+             equal_var=True)
+
+
+# The p-value obtained from the independent t-test is less <0.05.
+# 
+# Mean attrition of Yes is significantly different than No. 
+# 
+# Accept Alternative Hypothesis(H1). YearsAtCompany is affecting Attrition.
+
+# #### 'EnvSatisfaction' & 'Attrition'
+
+# In[55]:
+
+
+#crosstab for EnvSatisfaction & Attrition
+crossTab3 = pd.crosstab(index=df['Attrition'], columns=df['EnvSatisfaction'])
+crossTab3 = crossTab3.round(2)
+crossTab3
+
+
+# In[56]:
+
+
+crossTab3.plot(kind='bar')
+plt.ylabel('Count')
+plt.show()
+
+#Proportion/Counts of 'No' is higher than 'Yes' in EnvSatisfaction
+
+
+# In[57]:
+
+
+c, p, dof, expected = stats.chi2_contingency(crossTab3)
+p
+
+
+# p-value = < 0.05 
+# 
+# Accept alternative hypothesis(H1). Proportion difference of 'Yes' and 'No' by 'EnvSatisfaction' is significant. EnvSatisfaction is affecting the Attrition Rate.
+
+# #### 'Overtime' & 'Attrition'
+
+# In[58]:
+
+
+#Crosstab Table Overtime & Attrition
+crossTab4 = pd.crosstab(index=df['Attrition'], columns=df['OverTime'])
+crossTab4 = crossTab4.round(2)
+crossTab4
+
+
+# In[59]:
+
+
+#Crosstab Table for Ratio/Proportion
+crossTab4 = pd.crosstab(index=df['Attrition'], columns=df['OverTime'],normalize='index')*100
+crossTab4.round(1)
+
+
+# In[60]:
+
+
+#Crosstab Bar Chart
+crossTab4.plot(kind='bar')
+plt.ylabel('Percent, %')
+plt.show()
+
+
+# In[61]:
+
+
+#Statistical Test with Chi-Squared
+
+c, p, dof, expected = stats.chi2_contingency(crossTab4)
+p.round(2)
+
+
+# p=value =< 0.05
+# 
+# Accept alternative hypothesis(H1). Proportion difference of 'Yes' and 'No' by 'OverTime' is significant. OverTime is affecting Attrition.
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# ## Machine Learning - Classification Model  
+
+# In[62]:
+
+
+#Attrition of Employees
+
+attr_cnt = df['Attrition'].value_counts()
+
+attr_cnt
+
+
+# In[63]:
+
+
+#Attrition of Employees
+
+attr_prp = df['Attrition'].value_counts(normalize=True)
+attr_prp.round(2)
+
+
+# In[64]:
+
+
+#Bar Chart for Attrition
+
+attr_cnt.plot(kind='bar')
+plt.ylabel=('Count')
+plt.xlabel=('Attrition')
+plt.show()
+
+
+# In[65]:
+
+
+df = df[['Age', 'MonthlyIncome', 'JobSatisfaction', 'Bonus', 'DistanceFromHome', 'PerformanceRating', 'YearsAtCompany', 'OverTime', 'EnvSatisfaction', 'Attrition']]
+df.head()
+
+
+# ### Variables Selected from Multivariate Analysis
+# 
+# - Age
+# - MonthlyIncome
+# - Bonus
+# - DistanceFromHome
+# - YearsAtCompany
+# - JobSatisfaction
+# - EnvSatisfaction
+# - OverTime
+# 
+# 
+
+# In[66]:
+
+
+# Assigned Input and Output
+x = df.iloc[:,:-1]
+y = df.iloc[:,-1]
+
+
+# In[67]:
+
+
+#Transform Categorical to Encoded Dummy Numeric Variable
+
+x = pd.get_dummies(x,drop_first=True)
+
+
+# In[68]:
+
+
+x.head()
+
+
+# In[69]:
+
+
+#Partioning dataset. Due to inbalance dataset value, use stratified sampling
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.20,random_state=0, stratify = y)
+
+
+# In[71]:
+
+
+#Scaling the Train set
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+
+
+# ### Logistic Regression
+
+# In[72]:
+
+
+#####Train Logistic Regression Algorithm
+
+#Import LogisticRegression() function
+from sklearn.linear_model import LogisticRegression
+
+#Create a Logistic Regression classifier
+class_model = LogisticRegression(random_state=0)
+
+#Train the Logistic Regression algorithm using train set
+class_model.fit(x_train,y_train)
+
+
+# In[ ]:
+
+
+
+
+
+# ### Naive Bayes
+
+# #####Train Naive Bayes Algorithm
+# #Import Gaussian Naive Bayes model
+# from sklearn.naive_bayes import GaussianNB
+# 
+# #Create a Gaussian Classifier
+# class_model = GaussianNB()
+# 
+# #Train the model using the training sets
+# class_model.fit(x_train,y_train)
+
+# In[73]:
+
+
+#Scaling the Test Set
+
+x_test = scaler.transform(x_test)
+
+
+# In[74]:
+
+
+# Apply for Test Set
+y_pred=class_model.predict(x_test)
+
+
+# In[75]:
+
+
+#Dataframe of Predicted Output and Actual Output for Test set
+df_validate = pd.DataFrame({'Actual':y_test,'Predicted':y_pred}) #Create Data Frame
+df_validate['Predicted']=df_validate['Predicted']
+df_validate.head(5)
+
+
+# ### Performance Evaluation
+
+# In[76]:
+
+
+# Confusion Matrix
+
+pd.crosstab(y_pred,y_test)
+
+
+# In[77]:
+
+
+#Logistic Regression Report
+
+from sklearn.metrics import classification_report
+
+print(classification_report(y_true=y_test,y_pred=y_pred))
+
+
+# #Naive Bayes Report
+# 
+# from sklearn.metrics import classification_report
+# 
+# print(classification_report(y_true=y_test,y_pred=y_pred))
+
+# In[78]:
+
+
+filename = 'class_model.sav' #Assigning name to the model
+
+#Write it to the file
+
+pickle.dump(class_model, open(filename,'wb')) #wb - write binary
+
+
+# In[79]:
+
+
+joblib.dump(scaler,'scaler_reg.save')
